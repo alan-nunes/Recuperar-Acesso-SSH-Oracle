@@ -1,10 +1,10 @@
-# Recuperar acesso SSH a uma instância Linux da Oracle Cloud (OCI) sem a chave privada
+# ☁️🔐 Recuperar acesso SSH a uma instância Linux da Oracle Cloud (OCI) sem a chave privada
 
-> **Resumo (TL;DR):** a chave privada perdida **não pode ser recuperada**. A solução é gerar um **par de chaves novo** e fazer a instância aceitar a chave pública nova. O método que funcionou neste caso foi o **Bastion (Managed SSH session)**. Este guia traz também os métodos alternativos e todos os erros encontrados no caminho.
+> ⚡ **Resumo (TL;DR):** a chave privada perdida **não pode ser recuperada**. A solução é gerar um **par de chaves novo** e fazer a instância aceitar a chave pública nova. O método que funcionou neste caso foi o **Bastion (Managed SSH session)**. Este guia traz também os métodos alternativos e todos os erros encontrados no caminho.
 
 ---
 
-## Sumário
+## 📚 Sumário
 
 1. [Quando usar este guia](#1-quando-usar-este-guia)
 2. [Conceitos rápidos](#2-conceitos-rápidos)
@@ -25,7 +25,7 @@
 
 ---
 
-## 1. Quando usar este guia
+## 🎯 1. Quando usar este guia
 
 - Você tem uma instância Linux na Oracle Cloud e não lembra (ou perdeu) a chave **privada** usada na criação.
 - Você tem **acesso ao console web da Oracle** com permissão para configurar a instância e a rede.
@@ -40,7 +40,7 @@ A tela **Instance access** da instância mostra o IP público e o usuário padr�
 
 ---
 
-## 2. Conceitos rápidos
+## 💡 2. Conceitos rápidos
 
 | Termo | O que é |
 |---|---|
@@ -52,7 +52,7 @@ A tela **Instance access** da instância mostra o IP público e o usuário padr�
 
 ---
 
-## 3. Pré-requisitos
+## ✅ 3. Pré-requisitos
 
 - Acesso ao console: <https://cloud.oracle.com>
 - Um computador com cliente SSH (Windows 10/11 PowerShell, Linux ou Mac).
@@ -61,7 +61,7 @@ A tela **Instance access** da instância mostra o IP público e o usuário padr�
 
 ---
 
-## 4. Qual método escolher
+## 🧭 4. Qual método escolher
 
 | Método | Dificuldade | Depende do Cloud Agent? | Resultado neste caso |
 |---|---|---|---|
@@ -74,7 +74,7 @@ A tela **Instance access** da instância mostra o IP público e o usuário padr�
 
 ---
 
-## 5. Passo 1: gerar um novo par de chaves
+## 🔑 5. Passo 1: gerar um novo par de chaves
 
 ### Windows (PowerShell)
 
@@ -132,7 +132,7 @@ Na primeira vez pergunta sobre o fingerprint (responda `yes`) e depois falha com
 
 ---
 
-## 6. Método A: Run Command (Oracle Cloud Agent)
+## ⚙️ 6. Método A: Run Command (Oracle Cloud Agent)
 
 Executa um script dentro da instância pelo console, sem precisar de SSH.
 
@@ -184,7 +184,7 @@ Se isso acontecer por mais de 10 minutos, siga para o **Método B**.
 
 ---
 
-## 7. Método B: Bastion (Managed SSH) — o que funcionou
+## 🛡️ 7. Método B: Bastion (Managed SSH) — o que funcionou
 
 O Bastion cria um túnel até a instância e **injeta temporariamente** a chave pública que você informar na sessão. É gratuito.
 
@@ -193,10 +193,6 @@ O Bastion cria um túnel até a instância e **injeta temporariamente** a chave 
 1. **Compute → Instances →** sua instância → **Management → Oracle Cloud Agent**.
 2. Ative o plugin **Bastion** (coluna *Enable plugin*).
 3. Aguarde o status ficar **Running** (de 2 a 10 minutos). Atualize a página.
-
-Se tentar criar a sessão antes disso, aparece este erro:
-
-![Erro: plugin Bastion não está Running](imagens/09-bastion-plugin-nao-running.png)
 
 ### 7.2 Criar o Bastion
 
@@ -253,7 +249,7 @@ Aparece o prompt da instância (ainda **não termine por aqui**: siga para a se�
 
 ---
 
-## 8. Passo final: tornar a chave permanente e testar
+## 🔒 8. Passo final: tornar a chave permanente e testar
 
 > **Status: validado neste caso.** Depois de encerrar a sessão do Bastion, o SSH direto com a chave permanente funcionou.
 
@@ -322,7 +318,7 @@ Testar o SSH direto **enquanto a sessão do Bastion está ativa não prova nada*
 
 ---
 
-## 9. Acessar pelo PuTTY (Windows)
+## 🖥️ 9. Acessar pelo PuTTY (Windows)
 
 > **Observação:** esta seção segue o procedimento padrão do PuTTY. Não foi testada passo a passo neste caso, mas a chave pública na instância é a mesma, então não há nada a mudar do lado da Oracle.
 
@@ -372,7 +368,7 @@ O Bastion exige um **proxy configurado à parte** (um `ProxyCommand` equivalente
 
 ---
 
-## 10. Método C: nova instância a partir de clone ou imagem
+## 📦 10. Método C: nova instância a partir de clone ou imagem
 
 Use quando os métodos A e B não funcionarem (agente travado). Não depende do Cloud Agent, mas gera uma instância **nova** com **IP diferente**.
 
@@ -413,7 +409,7 @@ Se der erro de cota (`custom-image-count`), apague uma imagem antiga em **Comput
 
 ---
 
-## 11. Método D: Console Connection (não testado)
+## 🧪 11. Método D: Console Connection (não testado)
 
 > Esta seção **não foi testada** neste caso. Use como referência e valide antes de depender dela.
 
@@ -440,7 +436,7 @@ Acesso pela console serial da instância, sem rede nem agente.
 
 ---
 
-## 12. Tabela de erros e soluções
+## 🚨 12. Tabela de erros e soluções
 
 | Sintoma / mensagem | Causa provável | Solução |
 |---|---|---|
@@ -469,7 +465,7 @@ Acesso pela console serial da instância, sem rede nem agente.
 
 ---
 
-## 13. Boas práticas para não perder a chave de novo
+## ✨ 13. Boas práticas para não perder a chave de novo
 
 - Guarde uma **cópia da chave privada** (`oci_key`) em local seguro: gerenciador de senhas, pendrive ou cofre criptografado.
 - Use um **nome descritivo** para cada chave (ex.: `oci_delux`) e anote em qual instância ela está.
@@ -486,7 +482,7 @@ Acesso pela console serial da instância, sem rede nem agente.
 
 ---
 
-## 14. Resumo dos comandos
+## 📋 14. Resumo dos comandos
 
 ```powershell
 # 1. Gerar chave (Windows)
@@ -517,12 +513,6 @@ cat -A ~/.ssh/authorized_keys
 
 ---
 
-## Aviso sobre os prints antes de publicar
-
-Os prints foram capturados em um ambiente real. Antes de tornar o repositório público, **revise e esconda (borre) dados sensíveis**, como:
-
-- IPs públicos e privados (`01-instance-access.png`, `04-permission-denied.png`, `12-acesso-ok.png`)
-- OCIDs de instância e de sessão do Bastion (`09-bastion-plugin-nao-running.png`, `15-bastion-permission-denied.png`)
-- Nome de usuário do Windows e do tenancy, quando aparecerem
-
-Chaves **públicas** e fingerprints não são segredos, mas não há necessidade de expô-los.
+### 👨‍💻 Autor
+**Alan S. N.** | Graduado em Licenciatura em Computação - IFBA- Campus Porto Seguro  
+[Conecte-se comigo no LinkedIn](https://www.linkedin.com/in/alan-sn/)
